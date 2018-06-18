@@ -1,9 +1,12 @@
 // Enemies our player must avoid
-var Enemy = function(x , y) {
+var Enemy = function(x , y, speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = x
-    this.y = y;
+    this.x = 0;
+    this.y = 0;
+    this.width = 100;
+    this.height = 175;
+    this.speed = Math.floor(Math.random()* (300-100)) + 100;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -14,8 +17,22 @@ var Enemy = function(x , y) {
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
-    // all computers
-    this.x = this.x+(Math.random()  * 10 *dt*35);
+    // all computer
+    this.x += Math.round(this.speed *dt);
+
+    arrayY= [45,130,215];
+    if (this.y === 0){
+        this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
+    }
+
+    this.collides = function (other) {
+        let d = (this.x, this.y, this.width, this.height, other.x, other.y, other.width, other.height);
+        if (d.x < d.x + d.width && d.x + d.width > d.x && d.y < d.y + d.height && d.y + d.height > d.y){
+            return true;
+        } else {
+            return false;
+        }
+    }
 };
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -26,9 +43,11 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 class Player {
-    constructor(x = 0, y = 0) {
+    constructor(x = 200, y = 300, width = 100, height = 175) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
         this.boy = 'images/char-boy.png';
     }
 }
@@ -36,29 +55,37 @@ class Player {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+let allEnemies;
+let player;
 
-let allEnemies = [];
-allEnemies[Math.floor(Math.random()*allEnemies.length)]
-setInterval(function () {
-allEnemies.push(new Enemy(0,62));
-allEnemies.push(new Enemy(0,145));
-allEnemies.push(new Enemy(0,227));
-},1000);
+function init() {
+    allEnemies = [];
+    player = new Player();
+    allEnemies.push(new Enemy());
+    setInterval (function () {
+        for (var i = 0; i < allEnemies.length; i++) {
+            for (let j = 0; j < allEnemies.length; j++) {
+                if (i != j && allEnemies[i].collides(player)){
+                console.log('hello')
+                }
+            }
+        }
+    },750);
+}
 
+init();
 
+//if (collision(Player, Enemy)){
+//    console.log('hello')
+//}
+//function collision(a, b) {
+//    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y ;
+//}
 
+//init()
 
-allEnemies.forEach(function() {
-
-});
-
-console.log(allEnemies)
-
-let player = new Player(200,300);
-console.log(player)
-
-player.handleInput = function (y){
-    player.update(y);
+player.update = function (y){
+    player.handleInput(y);
     if(this.x === 500){
         this.x = 400;
     } if(this.x === -100) {
@@ -71,7 +98,7 @@ player.handleInput = function (y){
     }
 }
 
-player.update = function(y) {
+player.handleInput = function(y) {
     if (y === 'left'){
         this.x -= 100;
     } if (y === 'right'){
@@ -80,13 +107,10 @@ player.update = function(y) {
         this.y -= 85;
     } if (y === 'down'){
         this.y += 85;
-    } else {
-        this.x += 0;
-        this.y += 0;
     }
 }
 player.render = function() {
-    ctx.drawImage(Resources.get(this.boy),this.x,this.y);
+    ctx.drawImage(Resources.get(this.boy), this.x, this.y);
 }
 
 // This listens for key presses and sends the keys to your
