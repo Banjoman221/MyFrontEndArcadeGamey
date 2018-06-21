@@ -90,10 +90,17 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
-            enemy.update(dt);
-        });
-        player.update();
+        if (player) {
+            allEnemies.forEach(function(enemy) {
+                enemy.update(dt);
+            });
+
+        player1.update();
+        player2.update();
+        player3.update();
+        player4.update();
+        player5.update();
+    }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -149,15 +156,20 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        allEnemies.forEach(function(enemy) {
-            enemy.render();
-        });
-
-        player.render();
-        player2.render();
-        player3.render();
-        player4.render();
-        player5.render();
+             if (player) {
+                 allEnemies.forEach(function(enemy) {
+                     enemy.render();
+                 });
+             stars.render();
+             stars1.render();
+             stars2.render();
+         }
+             selector.render();
+             player1.render();
+             player2.render();
+             player3.render();
+             player4.render();
+             player5.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -182,6 +194,8 @@ var Engine = (function(global) {
         'images/char-horn-girl.png',
         'images/char-pink-girl.png',
         'images/char-princess-girl.png',
+        'images/Star.png',
+        'images/Selector.png'
     ]);
     Resources.onReady(init);
 

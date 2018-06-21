@@ -1,69 +1,21 @@
-// Enemies our player must avoid
-var Enemy = function(x , y, width, height) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.speed = Math.floor(Math.random()* (300-100)) + 100;
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.hits = function (player) {
-        if(this.x <= player.x + player.width/2 && player.x <= this.x + this.width/2 && this.y === player.y){
-            return true;
-        }
-    }
-};
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computer\
-    if (this.x < 600){
-        this.x += Math.round(this.speed *dt);
-
-        arrayY= [45,130,215];
-        if (this.y === 0){
-            this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
-        }
-        for (enemy of allEnemies) {
-            if(enemy.hits(player)){
-                console.log('HIT');
-                player.x = 200;
-                player.y = 300;
-            }
-        }
-    }
-};
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
-};
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// Player class for all characters
 let Player = function(char, x, y) {
     this.x = x;
     this.y = y;
     this.width = 100;
     this.height = 175;
     this.char = char;
+    this.selector = 'images/Selector.png'
+    this.hits = function (character) {
+        if(player && this.x <= character.x + character.width/2 && character.x <= this.x + this.width/2 && this.y === character.y){
+            return true;
+        }
+    }
 
-    // this.images = function () {
-    //     this.boy = 'images/char-boy.png';
-    //     this.cat = 'images/char-cat-girl.png';
-    //     this.hornGirl = 'images/char-horn-girl.png';
-    //     this.pinkGirl = 'images/char-pink-girl.png';
-    //     this.princessGirl = 'images/char-princess-girl.png';
-    // }
-
+    // Calls the update function and makes sure character doesn't move offscreen
     this.update = function (y){
-        player.handleInput(y);
+        this.handleInput(y);
         if(this.x === 500){
             this.x = 400;
         } if(this.x < 0) {
@@ -73,10 +25,25 @@ let Player = function(char, x, y) {
         } else if (this.y < 0) {
             this.x = 200;
             this.y = 300;
+            stars.update();
+            stars1.update();
+            stars2.update();
             console.log('win');
+        }
+
+        if (this.hits(stars)) {
+            stars.x = 0;
+            stars.y = -25;
+        } else if (this.hits(stars1)) {
+            stars1.x = 100;
+            stars1.y = -25;
+        } else if (this.hits(stars2)) {
+            stars2.x = 200;
+            stars2.y = -25;
         }
     }
 
+    // Changes direction of the character
     this.handleInput = function(dir) {
         if (dir === 'left'){
             this.x -= 100;
@@ -88,48 +55,87 @@ let Player = function(char, x, y) {
             this.y += 85;
         }
     }
-
+    // Draws the image on the screen
     this.render = function() {
         ctx.drawImage(Resources.get(char), this.x, this.y, this.width, this.height);
     }
 };
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+
+let Selector = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.select = 'images/Selector.png'
+
+    this.update = function(dir) {
+        if (dir === 'left'){
+            this.x -= 100;
+            if (this.x < 0) {
+                this.x = 0;
+            }
+        } if (dir === 'right'){
+            this.x += 100;
+            if (this.x === 500) {
+                this.x = 400;
+            }
+        } if (dir === 'up' || dir === 'down'){
+            this.y = 385;
+        }
+    }
+
+    this.selectCharacter = function (dir) {
+        if (selector.x === 0 && player1.x === 0 && dir === 'up') {
+            player = player1;
+            init();
+            player.y =300;
+        }else if (selector.x === 100 && player2.x === 100 && dir === 'up') {
+            player = player2;
+            init();
+            player.y =300;
+        }else if (selector.x === 200 && player3.x === 200 && dir === 'up') {
+            player = player3;
+            init();
+            player.y =300;
+        }else if (selector.x === 300 && player4.x === 300 && dir === 'up') {
+            player = player4;
+            init();
+            player.y =300;
+        }else if (selector.x === 400 && player5.x === 400 && dir === 'up') {
+            player = player5;
+            init();
+            player.y =300;
+        }
+    }
+    this.render = function() {
+        ctx.drawImage(Resources.get(this.select), this.x, this.y);
+    }
+}
+
+// Instantiate my objects.
 let allEnemies;
 let player;
 let player2;
 let player3;
 let player4;
 let player5;
+let stars;
+let stars1;
+let stars2;
+let selector;
 
-
-function init() {
-    allEnemies = [];
-    player = new Player('images/char-boy.png', 200,300)
-    player2 = new Player('images/char-cat-girl.png', 0, 300);
-    player3 = new Player('images/char-horn-girl.png', 100, 300);
-    player4 = new Player('images/char-pink-girl.png', 300, 300);
-    player5 = new Player('images/char-princess-girl.png', 400, 300);
-    console.log(allEnemies);
-    setInterval (function () {
-        allEnemies.push(new Enemy(0, 0, 100, 175))
-    },750);
+function startMenu() {
+    player1 = new Player('images/char-cat-girl.png', 0, 385);
+    player2 = new Player('images/char-horn-girl.png', 100, 385);
+    player3 = new Player('images/char-boy.png', 200, 385)
+    player4 = new Player('images/char-pink-girl.png', 300, 385);
+    player5 = new Player('images/char-princess-girl.png', 400, 385);
+    selector = new Selector(200,385);
+    selector.update();
+    selector.selectCharacter();
 }
 
-init();
+startMenu()
 
-
-
-    // let characters = [];
-    // characters.push(player1, player2, player3, player4, player5);
-    // for(character of characters) {
-    //     character.addEventListener('click', function(char) {
-    //         return char;
-    //     })
-    // }
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Keylistener for player.handleInput
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -137,6 +143,87 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
-    player.handleInput(allowedKeys[e.keyCode]);
+    if (!player) {
+        selector.update(allowedKeys[e.keyCode])
+        selector.selectCharacter(allowedKeys[e.keyCode])
+    } else{
+        player.handleInput(allowedKeys[e.keyCode])
+    }
 });
+
+function init() {
+    allEnemies = [];
+    setInterval (function () {
+        allEnemies.push(new Enemy(0, 0, 100, 175))
+    },750);
+    stars = new Stars();
+    stars1 = new Stars();
+    stars2 = new Stars();
+    stars.update();
+    stars1.update();
+    stars2.update();
+}
+
+
+// Stars class
+let Stars = function() {
+    this.x;
+    this.y;
+    this.width = 100;
+    this.height = 175;
+    this.star = 'images/Star.png';
+
+    this.update = function() {
+        arrayX = [100,200,300,400];
+        this.x = arrayX[Math.floor(Math.random()*arrayX.length)];
+
+        arrayY = [45,130,215];
+        this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
+    }
+
+    this.render = function() {
+        ctx.drawImage(Resources.get(this.star), this.x, this.y, this.width, this.height);
+    }
+}
+
+// Enemies player must avoid
+let Enemy = function(x , y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speed = Math.floor(Math.random()* (300-100)) + 100;
+    this.sprite = 'images/enemy-bug.png';
+    this.hits = function (character) {
+        if(this.x <= character.x + character.width/2 && character.x <= this.x + this.width/2 && this.y === character.y){
+            return true;
+        }
+    }
+};
+
+// Updates the enemies location
+Enemy.prototype.update = function(dt) {
+    if (this.x < 600){
+        this.x += Math.round(this.speed *dt);
+        // Randomizes the enemy between three rows
+        arrayY= [45,130,215];
+        if (this.y === 0){
+            this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
+        }
+        // Deticts if an enemy is hit by the player
+        for (enemy of allEnemies) {
+            if(enemy.hits(player)){
+                console.log('HIT');
+                player.x = 200;
+                player.y = 300;
+                stars.update();
+                stars1.update();
+                stars2.update();
+            }
+        }
+    }
+};
+// Draw the enemy on the screen
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, this.width, this.height);
+};
