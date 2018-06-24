@@ -212,6 +212,7 @@ let Selector = function(x, y) {
         }
     }
 }
+
 // Stars class
 let Stars = function() {
     this.x;
