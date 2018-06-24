@@ -15,6 +15,7 @@ let Enemy = function(x , y, width, height) {
 
 // Updates the enemies location
 Enemy.prototype.update = function(dt) {
+    // Makes the enemy traval across the screen at a certain speed
     if (this.x < 600) {
         this.x += Math.round(this.speed *dt);
         // Randomizes the enemy between three rows
@@ -22,18 +23,17 @@ Enemy.prototype.update = function(dt) {
         if (this.y === 0){
             this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
         }
-        // Deticts if an enemy is hit by the player
+        // Deticts if an enemy hits a player
         for (enemy of allEnemies) {
             if(enemy.hits(player)) {
                 console.log('HIT');
                 // if player is hit take player back to a certain spot
                 player.x = 200;
                 player.y = 300;
-                // Clear allStars array and reshuffle the stars
+                // Clear allStars an hitStars array and reshuffle the stars
                 allStars.length = 0;
-                stars.update();
-                stars1.update();
-                stars2.update();
+                hitStars.length = 0;
+                randomizeStars();
             }
         }
     }
@@ -68,39 +68,30 @@ let Player = function(char, x, y) {
         }else if (this.y === 470) {
             this.y = 385;
         }
-        // If you don't have three stars you cannot win
-        else if (this.y < 0 && allStars.length < 3) {
+        // If you don't have 4 stars you cannot win
+        else if (this.y < 0 && allStars.length < 4) {
             this.y = 45;
         }
-        // If all three stars are collected and you're at the water
+        // If all 4 stars are collected and you're at the water
         // The stars are reshuffled and you are taken back to where you started
-        else if (this.y < 0 && allStars.length === 3) {
+        else if (this.y < 0 && allStars.length === 4) {
             this.x = selector.x;
             this.y = selector.y;
             allStars.length = 0;
-            stars.update();
-            stars1.update();
-            stars2.update();
+            hitStars.length = 0;
+            randomizeStars();
+            // Incraments  the number of games won everytime a game is won
+            number += 1;
+            info.innerHTML = 'You won ' + number + ' game';
             console.log('win');
         }
-
-        // If a star is hit by player send the star to the top of offscreen
-        // and put it in an array
-        if (this.hits(stars)) {
-            stars.x = 0;
-            stars.y = -25;
-            allStars.push(stars);
-            console.log(allStars);
-        }else if (this.hits(stars1)) {
-            stars1.x = 100;
-            stars1.y = -25;
-            allStars.push(stars1);
-            console.log(allStars);
-        }else if (this.hits(stars2)) {
-            stars2.x = 200;
-            stars2.y = -25;
-            allStars.push(stars2);
-            console.log(allStars);
+        // Deticts to see if the player hits a star
+        for (star of allStars) {
+            if (this.hits(star)){
+                star.x = 0;
+                star.y = -100;
+                hitStars.push(star)
+            }
         }
     }
 
@@ -179,42 +170,48 @@ let Selector = function(x, y) {
     // If the game is already being played you can change characters by
     // putting the character on the selector
     this.selectAgain = function(dir) {
+        // If selector on player 1 select it as main player
         if (selector.x === 0 && player1.x === 0) {
             player = player1;
             if (dir === 'up') {
                 player.update();
                 player.y =300;
             }
-        }else if (selector.x === 100 && player2.x === 100) {
+        }
+        // If selector on player 2 select it as main player
+        else if (selector.x === 100 && player2.x === 100) {
             player = player2;
             if (dir === 'up') {
                 player.update();
                 player.y = 300;
             }
-        }else if (selector.x === 200 && player3.x === 200) {
+        }
+        // If selector on player 3 select it as main player
+        else if (selector.x === 200 && player3.x === 200) {
             player = player3;
             if (dir === 'up') {
                 player.update();
                 player.y = 300;
             }
-        }else if (selector.x === 300 && player4.x === 300) {
+        }
+        // If selector on player 4 select it as main player
+        else if (selector.x === 300 && player4.x === 300) {
             player = player4;
             if (dir === 'up') {
                 player.update();
                 player.y = 300;
             }
-        }else if (selector.x === 400 && player5.x === 400) {
+        }
+        // If selector on player 5 select it as main player
+        else if (selector.x === 400 && player5.x === 400) {
             player = player5;
             if (dir === 'up') {
                 player.update();
                 player.y = 300;
             }
-        }else {
-            player.y = 300;
         }
     }
 }
-
 // Stars class
 let Stars = function() {
     this.x;
@@ -226,7 +223,7 @@ let Stars = function() {
     // Updates the Stars position
     this.update = function() {
         arrayX = [100,200,300,400];
-        this.x = arrayX[Math.floor(Math.random()*arrayX.length)];
+        this.x = arrayX[Math.floor(Math.random()*arrayX.length)]
 
         arrayY = [45,130,215];
         this.y = arrayY[Math.floor(Math.random()*arrayY.length)];
@@ -237,18 +234,28 @@ let Stars = function() {
     }
 }
 
-//  Global variables
-let allEnemies;
-let allStars;
+
+// Global variables
+// For Enemies
+let allEnemies
+// For Players
 let player;
+let player1;
 let player2;
 let player3;
 let player4;
 let player5;
-let stars;
-let stars1;
-let stars2;
+// For Selector
 let selector;
+// For Stars
+let stars;
+let allStars;
+let hitStars;
+
+// Creates div and h1 nodes and Sets number to 0
+let number = 0;
+let information = document.createElement('div')
+let info = document.createElement('H1')
 
 // Draws all the characters and the selector
 function startMenu() {
@@ -265,19 +272,44 @@ function startMenu() {
 
 startMenu();
 
-// Initiates the game
+// Initiates the game once the player is selected
 function init() {
     allEnemies = [];
     setInterval (function () {
         allEnemies.push(new Enemy(0, 0, 100, 175));
     },750);
+    hitStars = [];
     allStars = [];
-    stars = new Stars();
-    stars1 = new Stars();
-    stars2 = new Stars();
-    stars.update();
-    stars1.update();
-    stars2.update();
+    randomizeStars();
+    // Append the nodes with added text
+    info.innerHTML = 'You Won ' + number + ' game';
+    info.setAttribute('class', 'info')
+    information.appendChild(info);
+    document.body.appendChild(information);
+}
+
+// Spawns 4 stars
+function randomizeStars() {
+    // Keeps running till there are 4 stars
+    while (allStars.length < 4) {
+        stars = new Stars();
+        stars.update();
+
+        let overlapping = false
+        // Checks to see if a star is overlapping
+        for (var j = 0; j < allStars.length; j++) {
+            let otherStar = allStars[j];
+            if (stars.x === otherStar.x && stars.y === otherStar.y) {
+                overlapping = true;
+                break;
+                console.log('hello')
+            }
+        }
+        // If they are not overlapping then add to starring array
+        if (!overlapping) {
+            allStars.push(stars)
+        }
+    }
 }
 
 // Keylistener for player.handleInput and selector
@@ -292,13 +324,14 @@ document.addEventListener('keyup', function(e) {
     if (!player) {
         selector.update(allowedKeys[e.keyCode]);
         selector.selectCharacter(allowedKeys[e.keyCode]);
-        // After the game is started and the player is on the selector,
-        // you are able to change characters
-    }else if (player.y === selector.y && player.x === selector.x) {
+    }
+    // After the game is started and the player is on the selector,
+    // you are able to change characters
+    else if (player.y === selector.y && player.x === selector.x) {
         selector.update(allowedKeys[e.keyCode]);
         selector.selectAgain(allowedKeys[e.keyCode]);
-        // Enables the players movement
     }else {
+        // Enables the players movement
         player.handleInput(allowedKeys[e.keyCode]);
     }
 });

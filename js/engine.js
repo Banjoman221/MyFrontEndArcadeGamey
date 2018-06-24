@@ -157,9 +157,9 @@ var Engine = (function(global) {
             allEnemies.forEach(function(enemy) {
                 enemy.render();
             });
-            stars.render();
-            stars1.render();
-            stars2.render();
+            for (star of allStars) {
+                star.render()
+            }
         }
         // Render selector
         selector.render();
