@@ -69,12 +69,12 @@ let Player = function(char, x, y) {
             this.y = 385;
         }
         // If you don't have 4 stars you cannot win
-        else if (this.y < 0 && allStars.length < 4) {
+        else if (this.y < 0 && hitStars.length < 4) {
             this.y = 45;
         }
         // If all 4 stars are collected and you're at the water
         // The stars are reshuffled and you are taken back to where you started
-        else if (this.y < 0 && allStars.length === 4) {
+        else if (this.y < 0 && hitStars.length === 4) {
             this.x = selector.x;
             this.y = selector.y;
             allStars.length = 0;
