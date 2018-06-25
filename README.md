@@ -12,7 +12,7 @@ The game starts by selecting a character. To Select a character move the selecto
 
 ## How To Run The Game
 
-To successfully run the game you must
+To successfully run the game you must:
 
 1. Go to my [github arcade game page ](https://github.com/Banjoman221/MyFrontEndArcadeGamey.git)download the zip file by going to the clone or download button and download the required zip file.
 
