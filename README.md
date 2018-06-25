@@ -20,7 +20,7 @@ To successfully run the game you must
  
  Note - If you wold like to clone the files go to your git console and type in:
 
- `$ git clone https://github.com/Banjoman221/MyFrontEndArcadeGamey.git`
+ `git clone https://github.com/Banjoman221/MyFrontEndArcadeGamey.git`
 
 then follow the second step to run the game.
 
