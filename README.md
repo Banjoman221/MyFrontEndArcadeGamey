@@ -22,6 +22,7 @@ To successfully run the game you must
 
  `$ git clone https://github.com/Banjoman221/MyFrontEndArcadeGamey.git`
 
+then follow the second step to run the game.
 
 ## Built With
 
